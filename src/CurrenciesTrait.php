@@ -2,12 +2,13 @@
 
 namespace Cknow\Money;
 
+use Cknow\Money\Currencies\CurrencyList;
 use Cknow\Money\Currencies\ISOCurrencies;
 use InvalidArgumentException;
 use Money\Currencies;
 use Money\Currencies\AggregateCurrencies;
 use Money\Currencies\BitcoinCurrencies;
-use Money\Currencies\CurrencyList;
+
 use Money\Currency;
 
 trait CurrenciesTrait
@@ -18,15 +19,16 @@ trait CurrenciesTrait
     protected static $currency;
 
     /**
-     * @var \Money\Currencies
+     * @var Currencies
      */
     protected static $currencies;
 
     /**
      * Parse currency.
      *
-     * @param  \Money\Currency|string  $currency
-     * @return \Money\Currency
+     * @param  Currency|string  $currency
+     *
+     * @return Currency
      */
     public static function parseCurrency($currency)
     {
@@ -40,7 +42,8 @@ trait CurrenciesTrait
     /**
      * Validates currency.
      *
-     * @param  \Money\Currency|string  $currency
+     * @param  Currency|string  $currency
+     *
      * @return bool
      */
     public static function isValidCurrency($currency)
@@ -55,8 +58,8 @@ trait CurrenciesTrait
      */
     public static function getDefaultCurrency()
     {
-        if (! isset(static::$currency)) {
-            static::setDefaultCurrency(config('money.defaultCurrency', config('money.currency', 'USD')));
+        if (!isset(static::$currency)) {
+            static::setDefaultCurrency(config('money.defaultCurrency', config('app.currency', 'CNY')));
         }
 
         return static::$currency;
@@ -85,11 +88,11 @@ trait CurrenciesTrait
     /**
      * Get currencies.
      *
-     * @return \Money\Currencies
+     * @return Currencies
      */
     public static function getCurrencies()
     {
-        if (! isset(static::$currencies)) {
+        if (!isset(static::$currencies)) {
             static::setCurrencies(config('money.currencies', []));
         }
 
@@ -99,7 +102,7 @@ trait CurrenciesTrait
     /**
      * Set currencies.
      *
-     * @param  \Money\Currencies|array|null  $currencies
+     * @param  Currencies|array|null  $currencies
      */
     public static function setCurrencies($currencies)
     {
@@ -112,11 +115,12 @@ trait CurrenciesTrait
      * Make currencies according to array derived from config or anywhere else.
      *
      * @param  array|null  $currenciesConfig
-     * @return \Money\Currencies
+     *
+     * @return Currencies
      */
     private static function makeCurrencies($currenciesConfig)
     {
-        if (! $currenciesConfig || ! is_array($currenciesConfig)) {
+        if (!$currenciesConfig || !is_array($currenciesConfig)) {
             // for backward compatibility
             return new ISOCurrencies;
         }
@@ -151,9 +155,10 @@ trait CurrenciesTrait
      *
      * @param  array|string  $config
      * @param  string  $sourceName
-     * @return \Money\Currencies
      *
-     * @throws \InvalidArgumentException
+     * @return Currencies
+     *
+     * @throws InvalidArgumentException
      */
     private static function makeCurrenciesForSource($config, Currencies $currencies, $sourceName)
     {
@@ -167,7 +172,7 @@ trait CurrenciesTrait
             foreach ($config as $index => $currencyCode) {
                 $currency = static::parseCurrency($currencyCode);
 
-                if (! $currencies->contains($currency)) {
+                if (!$currencies->contains($currency)) {
                     throw new InvalidArgumentException(
                         sprintf('Unknown %s currency code: %s', $sourceName, $currencyCode)
                     );

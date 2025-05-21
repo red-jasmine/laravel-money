@@ -73,9 +73,10 @@ class ISOCurrencies implements Currencies
     /**
      * @return array
      */
-    protected function loadCurrencies()
+    protected function loadCurrencies() : array
     {
-        $file = config('money.isoCurrenciesPath');
+        return config('iso-currencies',[]);
+
 
         if (file_exists($file)) {
             return require $file;

@@ -14,10 +14,11 @@ class ArrayMoneySerializer implements MoneySerializer
      */
     public function serialize(Money $money)
     {
+
         return array_merge(
             $money->getAttributes(),
             $money->getMoney()->jsonSerialize(),
-            ['formatted' => $money->format()]
+            ['formatted' => $money->formatByDecimal()]
         );
     }
 }
