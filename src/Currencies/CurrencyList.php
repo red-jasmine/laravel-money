@@ -40,6 +40,16 @@ final class CurrencyList implements Currencies
         return is_int($this->currencies[$currency->getCode()]) ? $this->currencies[$currency->getCode()] : $this->currencies[$currency->getCode()]['minorUnit'];
     }
 
+    public function getSymbol(Currency $currency) : ?string
+    {
+        if (!$this->contains($currency)) {
+            throw new UnknownCurrencyException('Cannot find ISO currency '.$currency->getCode());
+        }
+
+        return $this->currencies[$currency->getCode()]['symbol'] ?? null;
+    }
+
+
     /** {@inheritDoc} */
     public function getIterator() : Traversable
     {

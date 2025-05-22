@@ -15,18 +15,27 @@ class ISOCurrencies implements Currencies
      */
     private static $currencies;
 
-    public function contains(Currency $currency): bool
+    public function contains(Currency $currency) : bool
     {
         return isset($this->getCurrencies()[$currency->getCode()]);
     }
 
-    public function subunitFor(Currency $currency): int
+    public function subunitFor(Currency $currency) : int
     {
-        if (! $this->contains($currency)) {
+        if (!$this->contains($currency)) {
             throw new UnknownCurrencyException('Cannot find ISO currency '.$currency->getCode());
         }
 
         return $this->getCurrencies()[$currency->getCode()]['minorUnit'];
+    }
+
+    public function getSymbol(Currency $currency) : ?string
+    {
+        if (!$this->contains($currency)) {
+            throw new UnknownCurrencyException('Cannot find ISO currency '.$currency->getCode());
+        }
+
+        return $this->getCurrencies()[$currency->getCode()]['symbol'] ?? null;
     }
 
     /**
@@ -34,9 +43,9 @@ class ISOCurrencies implements Currencies
      *
      * @throws UnknownCurrencyException If currency is not available in the current context.
      */
-    public function numericCodeFor(Currency $currency): int
+    public function numericCodeFor(Currency $currency) : int
     {
-        if (! $this->contains($currency)) {
+        if (!$this->contains($currency)) {
             throw new UnknownCurrencyException('Cannot find ISO currency '.$currency->getCode());
         }
 
@@ -44,7 +53,7 @@ class ISOCurrencies implements Currencies
     }
 
     #[\ReturnTypeWillChange]
-    public function getIterator(): Traversable
+    public function getIterator() : Traversable
     {
         return new ArrayIterator(
             array_map(
@@ -75,7 +84,7 @@ class ISOCurrencies implements Currencies
      */
     protected function loadCurrencies() : array
     {
-        return config('iso-currencies',[]);
+        return config('iso-currencies', []);
 
 
         if (file_exists($file)) {

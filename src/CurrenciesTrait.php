@@ -4,9 +4,9 @@ namespace Cknow\Money;
 
 use Cknow\Money\Currencies\CurrencyList;
 use Cknow\Money\Currencies\ISOCurrencies;
+use Cknow\Money\Currencies\AggregateCurrencies;
 use InvalidArgumentException;
 use Money\Currencies;
-use Money\Currencies\AggregateCurrencies;
 use Money\Currencies\BitcoinCurrencies;
 
 use Money\Currency;
@@ -37,6 +37,15 @@ trait CurrenciesTrait
         }
 
         return $currency;
+    }
+
+    public static function getCurrencySymbol($currency) : ?string
+    {
+
+        if (is_string($currency)) {
+            $currency = new Currency($currency);
+        }
+        return static::getCurrencies()->getSymbol($currency);
     }
 
     /**
@@ -128,14 +137,17 @@ trait CurrenciesTrait
         $currenciesList = [];
 
         if ($currenciesConfig['iso'] ?? false) {
+
             $currenciesList[] = static::makeCurrenciesForSource(
                 $currenciesConfig['iso'],
                 new ISOCurrencies,
                 'ISO'
             );
+
         }
 
         if ($currenciesConfig['bitcoin'] ?? false) {
+
             $currenciesList[] = static::makeCurrenciesForSource(
                 $currenciesConfig['bitcoin'],
                 new BitcoinCurrencies,
@@ -170,6 +182,7 @@ trait CurrenciesTrait
             $lisCurrencies = [];
 
             foreach ($config as $index => $currencyCode) {
+
                 $currency = static::parseCurrency($currencyCode);
 
                 if (!$currencies->contains($currency)) {
@@ -177,8 +190,23 @@ trait CurrenciesTrait
                         sprintf('Unknown %s currency code: %s', $sourceName, $currencyCode)
                     );
                 }
+                if ($currencies instanceof BitcoinCurrencies) {
 
-                $lisCurrencies[$currency->getCode()] = $currencies->subunitFor($currency);
+                    $lisCurrencies[$currency->getCode()] = [
+                        'name'                => $currency->getCode(),
+                        'code'                => $currency->getCode(),
+                        'minorUnit'           => $currencies->subunitFor($currency),
+                        'subunit'             => pow(10, $currencies->subunitFor($currency)),
+                        'symbol'              => $currencies::SYMBOL,
+                        'symbol_first'        => true,
+                        'decimal_mark'        => '.',
+                        'thousands_separator' => ',',
+                    ];
+                } else {
+                    $lisCurrencies[$currency->getCode()] = $currencies->getCurrencies()[$currencyCode];
+                }
+
+
             }
 
             return new CurrencyList($lisCurrencies);
