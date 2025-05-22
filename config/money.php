@@ -7,15 +7,15 @@ return [
      |--------------------------------------------------------------------------
      */
     'locale'            => config('app.locale', 'en_US'),
-    'defaultCurrency'   => config('app.currency', 'USD'),
+    'defaultCurrency'   => config('app.currency', 'CNY'),
     'defaultFormatter'  => null,
     'defaultSerializer' => null,
     'currencies'        => [
-        'iso'     => 'all',
-        'bitcoin' => 'all',
+        'iso'     => ['CNY','USD'], //    'all' 选择全部
+        'bitcoin' => false, //    'false' 不支持
         'custom'  => [
-            'MY1' => [
-                'name'                => 'MY1',
+            'MJF' => [
+                'name'                => 'MJF',
                 'code'                => 999,
                 'minorUnit'           => 2,
                 'subunit'             => 100,
