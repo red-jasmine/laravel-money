@@ -17,6 +17,7 @@ class MoneyServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__.'/../config/money.php', 'money');
         $this->mergeConfigFrom(__DIR__.'/../config/iso-currencies.php', 'iso-currencies');
+        $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'money');
     }
 
     /**
